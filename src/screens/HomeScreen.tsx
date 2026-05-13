@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet } from 'react-native';
+import { View, Image, Text, FlatList, StyleSheet } from 'react-native';
 import { getPokemons } from '../services/pokemonService';
 import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
 
@@ -24,13 +24,28 @@ export default function HomeScreen() {
             <FlatList
                 data={pokemons}
                 keyExtractor={(item) => item.name}
-                renderItem={({ item }) => (
-                    <View style={styles.card}>
-                        <Text style={styles.name}>
-                            {item.name}
-                        </Text>
-                    </View>
-                )}
+                renderItem={({ item }) => {
+                    const pokemonId = item.url.split("/")[6];
+                    console.log(item.url);
+                    console.log(pokemonId);
+
+                    const imageUrl =
+                        `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemonId}.png`;
+                    return (
+                        <View style={styles.card}>
+                            <Text style={styles.number}>
+                                #{pokemonId}
+                            </Text>
+                            <Image
+                                source={{ uri: imageUrl }}
+                                style={styles.image}
+                            />
+                            <Text style={styles.name}>
+                                {item.name}
+                            </Text>
+                        </View>
+                    );
+                }}
             />
         </View>
     );
@@ -53,10 +68,20 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         marginBottom: 10,
         borderRadius: 10,
+        alignItems: 'center',
     },
     name: {
         fontSize: 18,
         fontWeight: 'bold',
         textTransform: 'capitalize',
+    },
+    image: {
+        width: 100,
+        height: 100,
+        alignSelf: 'center',
+    },
+    number: {
+        fontSize: 16,
+        fontWeight: 'bold',
     },
 });
