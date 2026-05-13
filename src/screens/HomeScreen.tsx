@@ -23,7 +23,7 @@ export default function HomeScreen() {
             <Text style={styles.title}>Pokédex</Text>
             <FlatList
                 data={pokemons}
-                keyExtractor={(item) => item.name()}
+                keyExtractor={(item) => item.name}
                 renderItem={({ item }) => (
                     <View style={styles.card}>
                         <Text style={styles.name}>
