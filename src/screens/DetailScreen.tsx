@@ -67,17 +67,17 @@ export default function DetailScreen() {
                 Statistics
             </Text>
 
-            <Text style={styles.info}>
-                HP: 35
-            </Text>
-
-            <Text style={styles.info}>
-                Attack: 55
-            </Text>
-
-            <Text style={styles.info}>
-                Defense: 40
-            </Text>
+                {pokemon.stats.map(
+                    (stat: any) => (
+                        <Text
+                            key={stat.stat.name}
+                            style={styles.info}
+                        >
+                            {stat.stat.name}:{" "}
+                            {stat.base_stat}
+                        </Text>
+                    )
+                )}
         </View>
     );
 }
