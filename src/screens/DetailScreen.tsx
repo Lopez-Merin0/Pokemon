@@ -1,37 +1,70 @@
 import { View, Text, StyleSheet, Image, } from "react-native";
+import { useRoute } from "@react-navigation/native";
+import { useEffect, useState } from "react";
+import { getPokemonDetail } from "../services/pokemonService";
 
 export default function DetailScreen() {
+    const route = useRoute<any>();
+
+    const { pokemonName } = route.params;
+
+    const [pokemon, setPokemon] =
+        useState<any>(null);
+
+    useEffect(() => {
+        loadPokemonDetail();
+    }, []);
+
+    const loadPokemonDetail = async () => {
+        try {
+            const data =
+                await getPokemonDetail(
+                    pokemonName
+                );
+
+            setPokemon(data);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    if (!pokemon) {
+        return (
+            <View style={styles.container}>
+                <Text>Cargando...</Text>
+            </View>
+        );
+    }
+
     return (
         <View style={styles.container}>
             <Text style={styles.name}>
-                Pikachu
+                {pokemon.name}
             </Text>
 
             <Image
-                source={{
-                    uri: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png",
-                }}
+                source={{ uri: pokemon.sprites.front_default, }}
                 style={styles.image}
             />
 
             <Text style={styles.info}>
-                Tipo: Eléctrico
+                Type: {pokemon.types.map((type: any) => type.type.name).join(", ")}
             </Text>
 
             <Text style={styles.info}>
-                Peso: 60
+                Weight: {pokemon.weight}
             </Text>
 
             <Text style={styles.info}>
-                Altura: 4
+                Height: {pokemon.height}
             </Text>
 
             <Text style={styles.info}>
-                Habilidad: Static
+                Ability: {pokemon.abilities.map((ability: any) => ability.ability.name).join(", ")}
             </Text>
 
             <Text style={styles.sectionTitle}>
-                Estadísticas
+                Statistics
             </Text>
 
             <Text style={styles.info}>

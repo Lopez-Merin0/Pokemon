@@ -1,13 +1,5 @@
 import { useEffect, useState } from 'react';
-import {
-    View,
-    Image,
-    Text,
-    FlatList,
-    StyleSheet,
-    TouchableOpacity,
-} from 'react-native';
-
+import { View, Image, Text, FlatList, StyleSheet, TouchableOpacity, } from 'react-native';
 import { getPokemons } from '../services/pokemonService';
 import { useNavigation } from "@react-navigation/native";
 
@@ -44,7 +36,7 @@ export default function HomeScreen() {
                         <TouchableOpacity
                             style={styles.card}
                             onPress={() =>
-                                navigation.navigate("Detail")
+                                navigation.navigate("Detail", { pokemonName: item.name })
                             }
                         >
                             <Text style={styles.number}>

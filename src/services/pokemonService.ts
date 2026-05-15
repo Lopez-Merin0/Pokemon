@@ -13,3 +13,22 @@ export const getPokemons = async () => {
         throw error;
     }
 };
+
+export const getPokemonDetail = async (
+  name: string
+) => {
+  try {
+    const response = await api.get(
+      `/pokemon/${name}`
+    );
+
+    return response.data;
+  } catch (error) {
+    console.log(
+      "Error obteniendo detalle:",
+      error
+    );
+
+    throw error;
+  }
+};
