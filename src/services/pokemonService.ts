@@ -6,7 +6,7 @@ const api = axios.create({
 
 export const getPokemons = async () => {
     try {
-        const response = await api.get('/pokemon?limit=20');
+        const response = await api.get('/pokemon?limit=149');
         return response.data.results;
     } catch (error) {
         console.log("Error obteniendo a los pokemones: ", error);
