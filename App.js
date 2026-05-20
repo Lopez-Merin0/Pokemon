@@ -6,6 +6,7 @@ import { Ionicons } from "@expo/vector-icons";
 import HomeScreen from "./src/screens/HomeScreen";
 import DetailScreen from "./src/screens/DetailScreen";
 import FavoritesScreen from "./src/screens/FavoritesScreen";
+import { tabNavigatorOptions, getTabIcon } from "./App.styles";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -14,55 +15,12 @@ function Tabs() {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
-        headerShown: false,
-
-        tabBarShowLabel: true,
-
-        tabBarStyle: {
-          backgroundColor: "#FFFDFD",
-
-          borderTopWidth: 0,
-
-          height: 75,
-
-          paddingBottom: 10,
-
-          paddingTop: 10,
-
-          borderTopLeftRadius: 25,
-
-          borderTopRightRadius: 25,
-
-          position: "absolute",
-        },
-
-        tabBarLabelStyle: {
-          fontSize: 12,
-          fontWeight: "600",
-        },
-
-        tabBarActiveTintColor:
-          "#F8BBD0",
-
-        tabBarInactiveTintColor:
-          "#B8AFAF",
-
+        ...tabNavigatorOptions,
         tabBarIcon: ({
           color,
           size,
         }) => {
-          let iconName;
-
-          if (
-            route.name === "Home"
-          ) {
-            iconName =
-              "home";
-          } else {
-            iconName =
-              "heart";
-          }
-
+          const iconName = getTabIcon(route);
           return (
             <Ionicons
               name={iconName}
