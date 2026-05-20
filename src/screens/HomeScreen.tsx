@@ -16,9 +16,9 @@ export default function HomeScreen() {
     const [showFilters, setShowFilters] = useState(false);
     const [types, setTypes] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
 
     useEffect(() => { loadPokemons(); loadFavorites(); loadTypes(); }, []);
-
     useEffect(() => { applyFilters(); }, [search, selectedType, pokemons]);
 
     const loadPokemons = async () => {
@@ -29,6 +29,7 @@ export default function HomeScreen() {
 
         } catch (error) {
             console.log(error);
+            setError("Error loading Pokémon");
 
         } finally {
             setLoading(false);
@@ -85,6 +86,16 @@ export default function HomeScreen() {
             setFilteredPokemons(filtered);
         };
 
+    if (error !== "") {
+
+        return (
+            <View style={styles.centerContainer}>
+                <Text style={styles.errorText}>
+                    {error}
+                </Text>
+            </View>
+        );
+    }
     if (loading) {
 
         return (
@@ -107,7 +118,7 @@ export default function HomeScreen() {
             <View style={styles.searchContainer}>
 
                 <TextInput
-                    placeholder="Buscar Pokémon..."
+                    placeholder="Looking for a Pokémon..."
                     placeholderTextColor="#B999A8"
                     value={search}
                     onChangeText={handleSearch}
@@ -371,5 +382,11 @@ const styles = StyleSheet.create({
     emptyText: {
         fontSize: 16,
         color: "#9B7E89",
+    },
+
+    errorText: {
+        fontSize: 18,
+        color: "#E26D8A",
+        fontWeight: "600",
     },
 });
