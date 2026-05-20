@@ -1,6 +1,6 @@
 import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity, TextInput, ScrollView, } from "react-native";
-import { useEffect, useState } from "react";
-import { useNavigation } from "@react-navigation/native";
+import React,{ useEffect, useState } from "react";
+import { useNavigation, useFocusEffect, } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import { getPokemons, getPokemonTypes, getPokemonsByType, } from "../services/pokemonService";
 import { getFavorites, saveFavorite, removeFavorite, } from "../storage/favoritesStorage";
@@ -18,7 +18,8 @@ export default function HomeScreen() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
-    useEffect(() => { loadPokemons(); loadFavorites(); loadTypes(); }, []);
+    useEffect(() => { loadPokemons(); loadTypes(); }, []);
+    useFocusEffect(React.useCallback(() => { loadFavorites(); }, []));
     useEffect(() => { applyFilters(); }, [search, selectedType, pokemons]);
 
     const loadPokemons = async () => {
