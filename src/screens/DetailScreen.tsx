@@ -188,8 +188,7 @@ export default function DetailScreen() {
 
                             {pokemon.stats.map((stat: any) => {
 
-                                const statPercentage =
-                                    (stat.base_stat / 150) * 100;
+                                const statPercentage = (stat.base_stat / 150) * 100;
 
                                 return (
                                     <View
@@ -211,17 +210,7 @@ export default function DetailScreen() {
 
                                         <View style={styles.barBackground}>
 
-                                            <View
-                                                style={[
-                                                    styles.barFill,
-                                                    {
-                                                        width:
-                                                            `${statPercentage}%`,
-                                                        backgroundColor,
-                                                    },
-                                                ]}
-                                            />
-
+                                            <View style={[styles.barFill, { width: `${statPercentage}%`, backgroundColor, },]} />
                                         </View>
 
                                     </View>
@@ -277,10 +266,7 @@ const styles = StyleSheet.create({
         borderTopRightRadius: 45,
         padding: 28,
         shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: -4,
-        },
+        shadowOffset: { width: 0, height: -4, },
         shadowOpacity: 0.08,
         shadowRadius: 10,
         elevation: 10,
