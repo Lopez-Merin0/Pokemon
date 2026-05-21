@@ -26,6 +26,34 @@ export const getPokemonDetail = async (
   }
 };
 
+export const getPokemonSpecies =
+  async (name: string) => {
+
+    try {
+
+      const response = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${name}`);
+      return await response.json();
+
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  };
+
+export const getEvolutionChain =
+  async (url: string) => {
+
+    try {
+
+      const response = await fetch(url);
+      return await response.json();
+
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  };
+
 export const getPokemonTypes =
   async () => {
     try {

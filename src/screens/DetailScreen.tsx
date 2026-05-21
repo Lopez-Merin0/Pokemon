@@ -1,32 +1,47 @@
 import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import { useEffect, useState } from "react";
-import { getPokemonDetail } from "../services/pokemonService";
+import { getPokemonDetail, getPokemonSpecies, getEvolutionChain, } from "../services/pokemonService";
 import { pokemonTypeColors } from "../utils/pokemonColors";
 
 export default function DetailScreen() {
+
     const route = useRoute<any>();
-
     const { pokemonName } = route.params;
+    const [pokemon, setPokemon] = useState<any>(null);
+    const [activeTab, setActiveTab] = useState("about");
+    const [evolutions, setEvolutions] = useState<string[]>([]);
 
-    const [pokemon, setPokemon] =
-        useState<any>(null);
-
-    const [activeTab, setActiveTab] =
-        useState("about");
-
-    useEffect(() => {
-        loadPokemonDetail();
-    }, []);
+    useEffect(() => { loadPokemonDetail(); }, []);
 
     const loadPokemonDetail = async () => {
         try {
-            const data =
-                await getPokemonDetail(
-                    pokemonName
-                );
 
+            const data = await getPokemonDetail(pokemonName);
             setPokemon(data);
+            loadEvolutionChain(data.name);
+
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const loadEvolutionChain = async (name: string) => {
+        try {
+
+            const species = await getPokemonSpecies(name);
+            const evolutionData = await getEvolutionChain(species.evolution_chain.url);
+            const evolutionNames: string[] = [];
+            let current = evolutionData.chain;
+
+            while (current) {
+
+                evolutionNames.push(current.species.name);
+                current = current.evolves_to[0];
+            }
+
+            setEvolutions(evolutionNames);
+
         } catch (error) {
             console.log(error);
         }
@@ -35,30 +50,24 @@ export default function DetailScreen() {
     if (!pokemon) {
         return (
             <View style={styles.loadingContainer}>
-                <Text>Cargando...</Text>
+                <Text>Loading...</Text>
             </View>
         );
     }
 
-    const mainType =
-        pokemon.types[0].type.name;
-
-    const backgroundColor =
-        pokemonTypeColors[mainType] || "#777";
+    const mainType = pokemon.types[0].type.name;
+    const backgroundColor = pokemonTypeColors[mainType] || "#777";
+    const animatedSprite = pokemon.sprites.versions["generation-v"]["black-white"].animated.front_default;
 
     return (
-        <View
-            style={[
-                styles.container,
-                { backgroundColor },
-            ]}
-        >
-            <Image
-                source={{ uri: pokemon.sprites.front_default, }}
+        <View style={[styles.container, { backgroundColor },]}>
+
+            <Image source={{ uri: animatedSprite || pokemon.sprites.front_default, }}
                 style={styles.image}
             />
 
             <View style={styles.bottomCard}>
+
                 <Text style={styles.number}>
                     #{pokemon.id}
                 </Text>
@@ -67,12 +76,28 @@ export default function DetailScreen() {
                     {pokemon.name}
                 </Text>
 
-                <Text style={styles.type}>
-                    {pokemon.types.map((type: any) => type.type.name).join(" • ")}
-                </Text>
+                <View style={styles.typesContainer}>
+                    {pokemon.types.map((type: any) => (
+                        <View
+                            key={type.type.name}
+                            style={[styles.typeBadge,
+                            { backgroundColor: pokemonTypeColors[type.type.name], },
+                            ]}
+                        >
+                            <Text style={styles.typeBadgeText}>
+                                {type.type.name}
+                            </Text>
+                        </View>
+                    ))}
+                </View>
 
                 <View style={styles.tabsContainer}>
-                    <TouchableOpacity onPress={() => setActiveTab("about")}>
+
+                    <TouchableOpacity
+                        onPress={() =>
+                            setActiveTab("about")
+                        }
+                    >
                         <Text style={[styles.tabText, activeTab === "about" && styles.activeTab,]}>
                             About
                         </Text>
@@ -83,11 +108,14 @@ export default function DetailScreen() {
                             Stats
                         </Text>
                     </TouchableOpacity>
+
                 </View>
 
-                <ScrollView showsVerticalScrollIndicator={false} >
+                <ScrollView showsVerticalScrollIndicator={false}>
+
                     {activeTab === "about" && (
                         <>
+
                             <View style={styles.infoRow}>
                                 <Text style={styles.label}>
                                     Weight
@@ -117,17 +145,60 @@ export default function DetailScreen() {
                                     {pokemon.abilities.map((ability: any) => ability.ability.name).join(", ")}
                                 </Text>
                             </View>
+
+                            <View style={styles.evolutionSection}>
+
+                                <Text style={styles.evolutionTitle}>
+                                    Evolutions
+                                </Text>
+
+                                <View style={styles.evolutionContainer}>
+
+                                    {evolutions.map(
+                                        (evolution, index) => {
+
+                                            const evolutionImage =
+                                                `https://img.pokemondb.net/sprites/black-white/anim/normal/${evolution}.gif`;
+
+                                            return (
+                                                <View key={evolution} style={styles.evolutionCard}>
+
+                                                    <Image
+                                                        source={{ uri: evolutionImage, }}
+                                                        style={styles.evolutionImage}
+                                                    />
+
+                                                    <Text style={styles.evolutionText}>
+                                                        {evolution}
+                                                    </Text>
+
+                                                </View>
+                                            );
+                                        }
+                                    )}
+                                </View>
+
+                            </View>
+
                         </>
                     )}
 
                     {activeTab === "stats" && (
                         <>
+
                             {pokemon.stats.map((stat: any) => {
-                                const statPercentage = (stat.base_stat / 150) * 100;
+
+                                const statPercentage =
+                                    (stat.base_stat / 150) * 100;
 
                                 return (
-                                    <View key={stat.stat.name} style={styles.statContainer}>
+                                    <View
+                                        key={stat.stat.name}
+                                        style={styles.statContainer}
+                                    >
+
                                         <View style={styles.statHeader}>
+
                                             <Text style={styles.statName}>
                                                 {stat.stat.name}
                                             </Text>
@@ -135,24 +206,41 @@ export default function DetailScreen() {
                                             <Text style={styles.statValue}>
                                                 {stat.base_stat}
                                             </Text>
+
                                         </View>
 
                                         <View style={styles.barBackground}>
-                                            <View style={[styles.barFill, { width: `${statPercentage}%`, backgroundColor, },]} />
+
+                                            <View
+                                                style={[
+                                                    styles.barFill,
+                                                    {
+                                                        width:
+                                                            `${statPercentage}%`,
+                                                        backgroundColor,
+                                                    },
+                                                ]}
+                                            />
+
                                         </View>
+
                                     </View>
                                 );
-                            }
-                            )}
+                            })}
+
                         </>
                     )}
+
                 </ScrollView>
+
             </View>
+
         </View>
     );
 }
 
 const styles = StyleSheet.create({
+
     container: {
         flex: 1,
         alignItems: "center",
@@ -206,11 +294,23 @@ const styles = StyleSheet.create({
         color: "#5A4E4E",
     },
 
-    type: {
-        fontSize: 18,
-        textAlign: "center",
-        color: "#777",
+    typesContainer: {
+        flexDirection: "row",
+        justifyContent: "center",
+        flexWrap: "wrap",
         marginBottom: 25,
+        gap: 10,
+    },
+
+    typeBadge: {
+        paddingVertical: 8,
+        paddingHorizontal: 16,
+        borderRadius: 20,
+    },
+
+    typeBadgeText: {
+        color: "#fff",
+        fontWeight: "700",
         textTransform: "capitalize",
     },
 
@@ -253,6 +353,47 @@ const styles = StyleSheet.create({
         textTransform: "capitalize",
         maxWidth: "60%",
         textAlign: "right",
+    },
+
+    evolutionSection: {
+        marginTop: 10,
+    },
+
+    evolutionTitle: {
+        fontSize: 18,
+        fontWeight: "700",
+        color: "#666",
+        marginBottom: 14,
+    },
+
+    evolutionContainer: {
+        flexDirection: "row",
+        flexWrap: "wrap",
+        gap: 10,
+    },
+
+    evolutionCard: {
+        alignItems: "center",
+        backgroundColor: "#FFD9EC",
+        paddingVertical: 12,
+        paddingHorizontal: 14,
+        borderRadius: 20,
+        marginRight: 12,
+        marginBottom: 12,
+        width: 100,
+    },
+
+    evolutionImage: {
+        width: 60,
+        height: 60,
+        resizeMode: "contain",
+        marginBottom: 6,
+    },
+
+    evolutionText: {
+        color: "#6B4F5B",
+        fontWeight: "700",
+        textTransform: "capitalize",
     },
 
     statContainer: {
