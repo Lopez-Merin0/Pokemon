@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useNavigation, useFocusEffect, } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import { getFavorites, removeFavorite, } from "../storage/favoritesStorage";

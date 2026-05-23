@@ -7,6 +7,7 @@ import HomeScreen from "./src/screens/HomeScreen";
 import DetailScreen from "./src/screens/DetailScreen";
 import FavoritesScreen from "./src/screens/FavoritesScreen";
 import { tabNavigatorOptions, getTabIcon } from "./App.styles";
+import CompareScreen from "./src/screens/CompareScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -41,6 +42,20 @@ function Tabs() {
         component={
           FavoritesScreen
         }
+      />
+
+      <Tab.Screen
+        name="Compare"
+        component={CompareScreen}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons
+              name="git-compare"
+              size={size}
+              color={color}
+            />
+          ),
+        }}
       />
     </Tab.Navigator>
   );
