@@ -26,12 +26,6 @@ npx expo start
 - `src/storage/favoritesStorage.ts`: Almacenamiento de favoritos
 - `src/utils/pokemonColors.ts`: Colores por tipo de Pokémon
 
-## Contribuir
-Si quieres mejorar la app, haz un fork, crea una rama con tu cambio y abre un pull request.
-
-## Licencia
-Proyecto para aprendizaje — libre para usar y modificar.
-
 ## Capturas de pantalla
 
 ### HomeScreen
